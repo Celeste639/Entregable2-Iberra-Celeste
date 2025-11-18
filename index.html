@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleex Academy | Soluciones Corporativas</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="brand-logo">
+                <img src="assets/logo.jpg" alt="Logo Fleex Academy" class="logo">
+                <h1>Fleex Academy</h1>
+            </div>
+            
+            <div class="carrito-icon-container">
+                <span class="cart-label">Plan de Formación:</span>
+                <div class="badge-container">
+                    🛒 <span id="contador-carrito" class="badge">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="presentacion-fleex">
+            <div class="intro-text">
+                <h2>Potenciamos el crecimiento de tu empresa</h2>
+                <p class="lead-text">
+                    <strong>Fleex</strong> es una empresa especializada en brindar y acompañar a las organizaciones 
+                    a escalar con tecnología. En esta sección, encontrarás capacitaciones diseñadas para 
+                    elevar el nivel técnico y humano de cada sector de tu compañía.
+                </p>
+            </div>
+        </section>
+
+        <section id="filtros">
+            <div class="input-wrapper">
+                <input type="text" id="buscador" placeholder="Buscar capacitación (ej: Excel, Liderazgo, Python...)">
+            </div>
+        </section>
+
+        <section id="contenedor-cursos" class="grid-cursos"></section>
+
+        <section id="seccion-carrito">
+            <div class="carrito-header">
+                <h3>📂 Plan de Capacitación Seleccionado</h3>
+                <button id="btn-vaciar" class="btn-outline-danger">Limpiar lista</button>
+            </div>
+            
+            <div id="carrito-contenedor" class="carrito-body">
+                </div>
+            
+            <div class="carrito-footer">
+                <p id="precio-total">Presupuesto Total: $0</p>
+                <button id="btn-finalizar" class="btn-primary">Solicitar Presupuesto</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/main.js"></script>
+    <section id="contacto" class="contacto-section">
+            <h3>📩 ¿Necesitas asesoría personalizada para tu empresa?</h3>
+            <p>Déjanos tus datos y un asesor de Fleex te contactará.</p>
+            
+            <form id="form-contacto">
+                <div class="form-group">
+                    <input type="text" id="nombre" placeholder="Tu Nombre" required>
+                    <input type="email" id="email" placeholder="Tu Email Corporativo" required>
+                </div>
+                <button type="submit" class="btn-primary">Enviar Consulta</button>
+            </form>
+        </section>
+        
+</body>
+</html>
