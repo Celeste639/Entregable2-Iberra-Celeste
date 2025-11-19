@@ -1,2 +1,2 @@
 # Entregable2-Iberra-Celeste
-Simulador de promedio de notas para el curso de JS
+Entregable 2
