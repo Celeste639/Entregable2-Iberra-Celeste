@@ -1,37 +1,55 @@
-class Curso {
-    constructor(id, nombre, precio, categoria, nivel) {
-        this.id = id;
-        this.nombre = nombre;
-        this.precio = precio;
-        this.categoria = categoria;
-        this.nivel = nivel;
-    }
-}
-const catalogoCursos = [
-    new Curso(1, "Programación Web HTML5", 15000, "Desarrollo", "Inicial"),
-    new Curso(2, "Python para Análisis de Datos", 18000, "Programación", "Intermedio"),
-    new Curso(3, "Lenguaje C: Fundamentos", 14000, "Programación", "Avanzado"),
-    new Curso(4, "Google Apps Script (JS)", 12000, "Automatización", "Intermedio"), // JS para Sheets
-    new Curso(5, "Excel Empresarial Avanzado", 10000, "Ofimática", "Avanzado"),
-    new Curso(6, "Marketing Digital 360", 13500, "Marketing", "Todos"),
-    new Curso(7, "Liderazgo Estratégico", 16000, "Soft Skills", "Gerencial"),
-    new Curso(8, "Inteligencia Emocional", 11000, "Soft Skills", "Todos")
-];
-let carrito = [];
+
+let carrito = []; 
+let catalogoCursos = [];
+
+// --- Selectores del DOM ---
 const contenedorCursos = document.getElementById('contenedor-cursos');
 const contenedorCarrito = document.getElementById('carrito-contenedor');
 const contadorCarrito = document.getElementById('contador-carrito');
 const precioTotalElement = document.getElementById('precio-total');
 const inputBuscador = document.getElementById('buscador');
 const btnVaciar = document.getElementById('btn-vaciar');
+const btnFinalizar = document.getElementById('btn-finalizar');
+const formularioContacto = document.getElementById('form-contacto');
 
+
+// --- 1. Inicialización y Carga Asíncrona
 document.addEventListener('DOMContentLoaded', () => {
+    obtenerCursos(); 
+
+ // 2. Cargar carrito del localStorage
     if (localStorage.getItem('carritoFleex')) {
         carrito = JSON.parse(localStorage.getItem('carritoFleex'));
         actualizarCarritoUI();
     }
-    renderizarCursos(catalogoCursos);
 });
+
+
+function obtenerCursos() {
+    fetch('./data/cursos.json') 
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('La respuesta de la red no fue correcta');
+            }
+            return response.json();
+        })
+        .then(data => {
+            catalogoCursos = data; 
+            renderizarCursos(catalogoCursos);
+        })
+        .catch(error => {
+
+            Toastify({
+                text: '❌ Error al cargar el catálogo de cursos. Verifica la ruta del JSON.',
+                duration: 5000,
+                gravity: "top",
+                position: "center",
+                style: {
+                    background: "linear-gradient(to right, #ef4444, #f87171)", 
+                },
+            }).showToast();
+        });
+}
 
 function renderizarCursos(lista) {
     contenedorCursos.innerHTML = ''; 
@@ -52,32 +70,9 @@ function renderizarCursos(lista) {
         contenedorCursos.appendChild(tarjeta);
         
         const btn = document.getElementById(`btn-${curso.id}`);
-        btn.addEventListener('click', () => agregarAlCarrito(curso));
+
+        btn.addEventListener('click', () => agregarAlCarrito(catalogoCursos.find(c => c.id === curso.id)));
     });
-}
-
-function agregarAlCarrito(cursoNuevo) {
-    const existe = carrito.some(curso => curso.id === cursoNuevo.id);
-    if(!existe) {
-        carrito.push(cursoNuevo);
-    }
-    actualizarCarritoUI();
-    guardarStorage();
-}
-
-function eliminarDelCarrito(id) {
-    const index = carrito.findIndex(curso => curso.id === id);
-    if (index !== -1) {
-        carrito.splice(index, 1);
-        actualizarCarritoUI();
-        guardarStorage();
-    }
-}
-
-function vaciarCarrito() {
-    carrito = [];
-    actualizarCarritoUI();
-    localStorage.removeItem('carritoFleex');
 }
 
 function actualizarCarritoUI() {
@@ -107,9 +102,95 @@ function actualizarCarritoUI() {
     precioTotalElement.innerText = `Presupuesto Total: $${total.toLocaleString()}`;
 }
 
+
+// --- 3. Lógica de Datos y Eventos ---
+function agregarAlCarrito(cursoNuevo) {
+    const existe = carrito.some(curso => curso.id === cursoNuevo.id);
+
+    if(!existe) {
+        carrito.push(cursoNuevo);
+
+        Toastify({
+            text: `✅ Curso "${cursoNuevo.nombre}" agregado al plan.`,
+            duration: 3000,
+            gravity: "bottom",
+            position: "right",
+            style: {
+                background: "linear-gradient(to right, #3b82f6, #38bdf8)", 
+            },
+        }).showToast();
+    } else {
+
+        Toastify({
+            text: `⚠️ El curso "${cursoNuevo.nombre}" ya está en tu plan.`,
+            duration: 3000,
+            gravity: "bottom",
+            position: "right",
+            style: {
+                background: "linear-gradient(to right, #fbbf24, #f59e0b)",
+            },
+        }).showToast();
+    }
+    actualizarCarritoUI();
+    guardarStorage();
+}
+
+function eliminarDelCarrito(id) {
+    carrito = carrito.filter(curso => curso.id !== id);
+    actualizarCarritoUI();
+    guardarStorage();
+}
+
+function vaciarCarrito() {
+    carrito = [];
+    actualizarCarritoUI();
+    localStorage.removeItem('carritoFleex');
+}
+
 function guardarStorage() {
     localStorage.setItem('carritoFleex', JSON.stringify(carrito));
 }
+
+function finalizarSolicitud() {
+    if (carrito.length === 0) {
+        Swal.fire({
+            title: 'Plan Vacío',
+            text: 'Para solicitar un presupuesto, debes agregar al menos una capacitación a tu plan.',
+            icon: 'warning',
+            confirmButtonColor: '#3498db'
+        });
+        return;
+    }
+    
+    const total = carrito.reduce((acc, item) => acc + item.precio, 0);
+    
+    Swal.fire({
+        title: 'Confirmar Solicitud',
+        html: `
+            <p>Estás a punto de solicitar presupuesto por ${carrito.length} curso(s).</p>
+            <p><strong>Presupuesto Estimado: $${total.toLocaleString()}</strong></p>
+        `,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, Solicitar Ahora',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#27ae60', // Verde
+        cancelButtonColor: '#e74c3c' // Rojo
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: '¡Solicitud Enviada!',
+                text: 'Recibirás la confirmación y los detalles en tu correo. El carrito ha sido vaciado.',
+                icon: 'success',
+                confirmButtonColor: '#2c3e50'
+            });
+            vaciarCarrito();
+        }
+    });
+}
+
+
+// --- 4. Asignación de Eventos ---
 
 inputBuscador.addEventListener('input', (e) => {
     const busqueda = e.target.value.toLowerCase();
@@ -119,30 +200,28 @@ inputBuscador.addEventListener('input', (e) => {
     renderizarCursos(resultado);
 });
 
+
 btnVaciar.addEventListener('click', vaciarCarrito);
-//Formulario (Evento Submit)
-const formularioContacto = document.getElementById('form-contacto');
+
+btnFinalizar.addEventListener('click', finalizarSolicitud);
 
 formularioContacto.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    // Captura datos del formulario
     const nombre = document.getElementById('nombre').value;
     const email = document.getElementById('email').value;
-    if (nombre && email) {
-        console.log("Formulario enviado con éxito");
-        console.log(`Nombre: ${nombre}, Email: ${email}`);
-        //DOM
-        const mensajeExito = document.createElement('p');
-        mensajeExito.innerText = `¡Gracias ${nombre}! Nos pondremos en contacto contigo a ${email} a la brevedad.`;
-        mensajeExito.style.color = "green";
-        mensajeExito.style.fontWeight = "bold";
-        mensajeExito.style.marginTop = "10px";
 
-        formularioContacto.appendChild(mensajeExito);
+    if (nombre && email) {
+        Toastify({
+            text: `Gracias ${nombre}! Tu consulta ha sido enviada.`,
+            duration: 3000,
+            gravity: "bottom",
+            position: "left",
+            style: {
+                background: "linear-gradient(to right, #6d28d9, #9333ea)",
+            },
+        }).showToast();
+
         formularioContacto.reset();
-        setTimeout(() => {
-            mensajeExito.remove();
-        }, 5000);
     }
 });

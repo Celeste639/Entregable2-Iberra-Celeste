@@ -1,0 +1,58 @@
+[
+    {
+        "id": 1,
+        "nombre": "Programación Web HTML5",
+        "precio": 15000,
+        "categoria": "Desarrollo",
+        "nivel": "Inicial"
+    },
+    {
+        "id": 2,
+        "nombre": "Python para Análisis de Datos",
+        "precio": 18000,
+        "categoria": "Programación",
+        "nivel": "Intermedio"
+    },
+    {
+        "id": 3,
+        "nombre": "Lenguaje C: Fundamentos",
+        "precio": 14000,
+        "categoria": "Programación",
+        "nivel": "Avanzado"
+    },
+    {
+        "id": 4,
+        "nombre": "Google Apps Script (JS)",
+        "precio": 12000,
+        "categoria": "Automatización",
+        "nivel": "Intermedio"
+    },
+    {
+        "id": 5,
+        "nombre": "Excel Empresarial Avanzado",
+        "precio": 10000,
+        "categoria": "Ofimática",
+        "nivel": "Avanzado"
+    },
+    {
+        "id": 6,
+        "nombre": "Marketing Digital 360",
+        "precio": 13500,
+        "categoria": "Marketing",
+        "nivel": "Todos"
+    },
+    {
+        "id": 7,
+        "nombre": "Liderazgo Estratégico",
+        "precio": 16000,
+        "categoria": "Soft Skills",
+        "nivel": "Gerencial"
+    },
+    {
+        "id": 8,
+        "nombre": "Inteligencia Emocional",
+        "precio": 11000,
+        "categoria": "Soft Skills",
+        "nivel": "Todos"
+    }
+]
